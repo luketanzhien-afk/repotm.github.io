@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Recipe Book</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff8ef;
+            color: #333;
+        }
+
+        header {
+            background-color: #e85d04;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        header h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 18px;
+        }
+
+        .foods {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 40px 20px;
+        }
+
+        .food-card {
+            background-color: white;
+            width: 250px;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: 0.3s;
+            overflow: hidden;
+        }
+
+        .food-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+        }
+
+        .food-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .food-card h2 {
+            color: #e85d04;
+            margin-bottom: 8px;
+        }
+
+        .food-card p {
+            line-height: 1.5;
+        }
+
+        .recipe {
+            display: none;
+            max-width: 700px;
+            margin: 20px auto 50px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .recipe h2 {
+            color: #e85d04;
+            margin-bottom: 15px;
+            font-size: 30px;
+        }
+
+        .recipe h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #9d4400;
+        }
+
+        .recipe ul,
+        .recipe ol {
+            margin-left: 25px;
+            line-height: 1.8;
+        }
+
+        .close-btn {
+            margin-top: 25px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #e85d04;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .close-btn:hover {
+            background-color: #c94d00;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+
+            header h1 {
+                font-size: 30px;
+            }
+
+            header p {
+                font-size: 16px;
+            }
+
+            .foods {
+                padding: 25px 15px;
+            }
+
+            .food-card {
+                width: 100%;
+                max-width: 350px;
+            }
+
+            .recipe {
+                margin: 20px 15px 40px;
+                padding: 20px;
+            }
+
+            .recipe h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>🍴 My Recipe Book</h1>
+        <p>Click on a food to see its recipe!</p>
+    </header>
+
+
+    <!-- Food Choices -->
+    <section class="foods">
+
+        <!-- Chicken Rice -->
+        <div class="food-card" onclick="showRecipe('chickenRice')">
+
+            <img
+                src="data:image/jpeg;base64,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"
+                alt="Chicken Rice"
+            >
+
+            <h2>Chicken Rice</h2>
+            <p>Delicious Singapore-style chicken rice</p>
+        </div>
+
+
+        <!-- Tomato Pasta -->
+        <div class="food-card" onclick="showRecipe('tomatoPasta')">
+
+            <img
+                src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=600&q=80"
+                alt="Tomato Pasta"
+            >
+
+            <h2>Tomato Pasta</h2>
+            <p>Simple and tasty tomato pasta</p>
+        </div>
+
+
+        <!-- Laksa -->
+        <div class="food-card" onclick="showRecipe('laksa')">
+
+            <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3DtUkJObKk0rmdqLtd7QgwW0ObaDTsjHZi11XQF22pw&s=10"
+                alt="Laksa"
+            >
+
+            <h2>Laksa</h2>
+            <p>Spicy and creamy noodle soup</p>
+        </div>
+
+
+        <!-- Fried Rice -->
+        <div class="food-card" onclick="showRecipe('friedRice')">
+
+            <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4RQBfL9_pn6-G6la3e49xemygULEEhFWlKJhqwdyV9Q&s=10"
+                alt="Fried Rice"
+            >
+
+            <h2>Fried Rice</h2>
+            <p>Quick and delicious fried rice</p>
+        </div>
+
+
+        <!-- Japanese Beef Rice Bowl -->
+        <div class="food-card" onclick="showRecipe('beefRiceBowl')">
+
+            <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2nhuXMYpe0kJyBprwilC5rmyBfIAtuNAGz66rVzvIoQ&s=10"
+                alt="Japanese Beef Rice Bowl"
+            >
+
+            <h2>Japanese Beef Rice Bowl</h2>
+            <p>Tender beef served over warm Japanese rice</p>
+        </div>
+
+    </section>
+
+
+    <!-- Chicken Rice Recipe -->
+    <section id="chickenRice" class="recipe">
+
+        <h2>🍗 Chicken Rice</h2>
+
+        <h3>Ingredients</h3>
+
+        <ul>
+            <li>2 chicken thighs</li>
+            <li>2 cups rice</li>
+            <li>3 cloves garlic</li>
+            <li>1 tablespoon ginger</li>
+            <li>Chicken stock</li>
+            <li>Soy sauce</li>
+            <li>Sesame oil</li>
+        </ul>
+
+        <h3>Instructions</h3>
+
+        <ol>
+            <li>Cook the chicken in water until fully cooked.</li>
+            <li>Wash the rice and cook it with chicken stock, garlic and ginger.</li>
+            <li>Slice the cooked chicken into pieces.</li>
+            <li>Serve the chicken over the fragrant rice.</li>
+            <li>Add soy sauce and sesame oil to taste.</li>
+        </ol>
+
+        <button class="close-btn" onclick="closeRecipe()">
+            Close Recipe
+        </button>
+
+    </section>
+
+
+    <!-- Tomato Pasta Recipe -->
+    <section id="tomatoPasta" class="recipe">
+
+        <h2>🍝 Tomato Pasta</h2>
+
+        <h3>Ingredients</h3>
+
+        <ul>
+            <li>200g pasta</li>
+            <li>2 tomatoes</li>
+            <li>2 cloves garlic</li>
+            <li>1 tablespoon olive oil</li>
+            <li>½ cup tomato sauce</li>
+            <li>Salt and pepper</li>
+            <li>Parmesan cheese</li>
+        </ul>
+
+        <h3>Instructions</h3>
+
+        <ol>
+            <li>Boil the pasta until it is cooked.</li>
+            <li>Heat olive oil in a pan and cook the garlic.</li>
+            <li>Add tomatoes and tomato sauce.</li>
+            <li>Season with salt and pepper.</li>
+            <li>Add the cooked pasta to the sauce.</li>
+            <li>Top with Parmesan cheese and serve.</li>
+        </ol>
+
+        <button class="close-btn" onclick="closeRecipe()">
+            Close Recipe
+        </button>
+
+    </section>
+
+
+    <!-- Laksa Recipe -->
+    <section id="laksa" class="recipe">
+
+        <h2>🍜 Laksa</h2>
+
+        <h3>Ingredients</h3>
+
+        <ul>
+            <li>200g rice noodles</li>
+            <li>2 tablespoons laksa paste</li>
+            <li>1 can coconut milk</li>
+            <li>2 cups chicken or vegetable stock</li>
+            <li>100g chicken or prawns</li>
+            <li>Bean sprouts</li>
+            <li>Boiled egg</li>
+        </ul>
+
+        <h3>Instructions</h3>
+
+        <ol>
+            <li>Cook the rice noodles according to the package instructions.</li>
+            <li>Heat the laksa paste in a pot.</li>
+            <li>Add the stock and coconut milk.</li>
+            <li>Add chicken or prawns and cook thoroughly.</li>
+            <li>Place the noodles into a bowl.</li>
+            <li>Pour the laksa soup over the noodles.</li>
+            <li>Top with bean sprouts and a boiled egg.</li>
+        </ol>
+
+        <button class="close-btn" onclick="closeRecipe()">
+            Close Recipe
+        </button>
+
+    </section>
+
+
+    <!-- Fried Rice Recipe -->
+    <section id="friedRice" class="recipe">
+
+        <h2>🍚 Fried Rice</h2>
+
+        <h3>Ingredients</h3>
+
+        <ul>
+            <li>2 cups cooked rice</li>
+            <li>2 eggs</li>
+            <li>1 carrot</li>
+            <li>½ cup peas</li>
+            <li>2 cloves garlic</li>
+            <li>2 tablespoons soy sauce</li>
+            <li>Cooking oil</li>
+        </ul>
+
+        <h3>Instructions</h3>
+
+        <ol>
+            <li>Heat oil in a large pan.</li>
+            <li>Cook the garlic and carrots.</li>
+            <li>Add the eggs and scramble them.</li>
+            <li>Add the cooked rice and peas.</li>
+            <li>Pour in the soy sauce.</li>
+            <li>Stir-fry everything for a few minutes.</li>
+            <li>Serve hot and enjoy!</li>
+        </ol>
+
+        <button class="close-btn" onclick="closeRecipe()">
+            Close Recipe
+        </button>
+
+    </section>
+
+
+    <!-- Japanese Beef Rice Bowl Recipe -->
+    <section id="beefRiceBowl" class="recipe">
+
+        <h2>🥩 Japanese Beef Rice Bowl</h2>
+
+        <h3>Ingredients</h3>
+
+        <ul>
+            <li>250g thinly sliced beef</li>
+            <li>2 cups cooked Japanese rice</li>
+            <li>1 onion, thinly sliced</li>
+            <li>2 tablespoons soy sauce</li>
+            <li>1 tablespoon mirin</li>
+            <li>1 tablespoon sugar</li>
+            <li>½ cup water</li>
+            <li>1 teaspoon cooking oil</li>
+            <li>2 spring onions</li>
+            <li>Sesame seeds</li>
+            <li>Optional: soft-boiled egg</li>
+        </ul>
+
+        <h3>Instructions</h3>
+
+        <ol>
+            <li>Cook the Japanese rice and keep it warm.</li>
+            <li>Heat cooking oil in a pan over medium heat.</li>
+            <li>Add the sliced onion and cook until soft.</li>
+            <li>Add the beef and cook until it is no longer pink.</li>
+            <li>Add soy sauce, mirin, sugar and water.</li>
+            <li>Simmer for about 5 minutes until the sauce becomes slightly thick.</li>
+            <li>Place the warm rice into a bowl.</li>
+            <li>Spoon the beef and onions over the rice.</li>
+            <li>Top with spring onions and sesame seeds.</li>
+            <li>Add a soft-boiled egg if desired.</li>
+            <li>Serve hot and enjoy!</li>
+        </ol>
+
+        <button class="close-btn" onclick="closeRecipe()">
+            Close Recipe
+        </button>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 My Recipe Book 🍴</p>
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script>
+
+        function showRecipe(recipeId) {
+
+            // Hide all recipes
+            const recipes = document.querySelectorAll(".recipe");
+
+            recipes.forEach(function(recipe) {
+                recipe.style.display = "none";
+            });
+
+            // Show selected recipe
+            const selectedRecipe = document.getElementById(recipeId);
+
+            selectedRecipe.style.display = "block";
+
+            // Scroll to recipe
+            selectedRecipe.scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+
+
+        function closeRecipe() {
+
+            // Hide all recipes
+            const recipes = document.querySelectorAll(".recipe");
+
+            recipes.forEach(function(recipe) {
+                recipe.style.display = "none";
+            });
+
+            // Scroll back to food choices
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+    </script>
+
+</body>
+</html>
